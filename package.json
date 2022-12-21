@@ -1,10 +1,11 @@
 {
-    "name": "ecommerce-api",
+    "name": "noon-clone",
     "version": "1.0.0",
     "description": "",
     "main": "server.js",
     "scripts": {
         "build": "rimraf ./dist && tsc",
+        "rimraf": "./node_modules/rimraf/bin.js",
         "start:dev": "tsc-watch --onSuccess \"node ./dist/server.js\"",
         "start": "npm run build && node ./dist/server.js",
         "dropTestdb": "db-migrate db:drop ecommercedb_test",

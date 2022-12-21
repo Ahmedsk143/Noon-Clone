@@ -7,16 +7,16 @@
     Server **localhost** and Database **Postgres** on
     Port **5432** using your **Username** and **Password**
 3.  ```bash:
-     CREATE DATABASE ecommercedb;
+     CREATE DATABASE noondb;
     ```
 
 ## Package installation instructions
 
 1.  ```bash:
-    git clone https://github.com/Ahmedsk143/Storefront-Backend.git
+    git clone https://github.com/Ahmedsk143/Noon-Clone.git
     ```
 2.  ```bash:
-     cd Storefront-Backend
+     cd Noon-Clone
     ```
 3.  ```bash:
     npm install
@@ -36,17 +36,3 @@
 ```
 
 # Environment Variables
-
-```javascript:
-DB_HOST = "localhost"
-DB_NAME_DEV = "ecommercedb"
-DB_NAME_TEST = "ecommercedb_test"
-DB_NAME_PROD = "ecommercedb_prod"
-DB_PORT = 5432
-DB_USERNAME = "postgres"
-DB_PASSWORD = ""
-ENV = "dev"
-BCRYPT_PASSWORD = "!@#$%"
-SALT_ROUNDS = 10
-PRIVATE_KEY = "!@#$%^"
-```
