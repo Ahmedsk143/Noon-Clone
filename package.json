@@ -7,7 +7,7 @@
         "build": "tsc",
         "rimraf": "./node_modules/rimraf/bin.js",
         "start:dev": "tsc-watch --onSuccess \"node ./dist/server.js\"",
-        "start": "npm run build && node ./dist/server.js",
+        "start": "node ./dist/server.js",
         "dropTestdb": "db-migrate db:drop ecommercedb_test",
         "createTestdb": "db-migrate db:create ecommercedb_test",
         "test": "SET ENV=test && npm run dropTestdb && npm run createTestdb && db-migrate up --env test && npm run build && jasmine --random=false ",
