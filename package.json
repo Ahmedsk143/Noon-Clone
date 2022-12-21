@@ -5,7 +5,7 @@
     "main": "server.js",
     "scripts": {
         "build": "npm install tsc",
-        "start": "node ./dist/server.js",
+        "start": "node /dist/server.js",
         "rimraf": "./node_modules/rimraf/bin.js",
         "start:dev": "tsc-watch --onSuccess \"node ./dist/server.js\"",
         "dropTestdb": "db-migrate db:drop ecommercedb_test",
