@@ -38,6 +38,19 @@ class UserModel {
             throw new Error(`Cannont add the User ${err}`);
         }
     }
+    async checkEmail(user: User): Promise<boolean> {
+        try {
+            const conn = await DBConnection.connect();
+            const sql = 'select email from users where email = $1';
+            const values = [user.email];
+            const result = await conn.query(sql, values);
+            conn.release();
+            console.log(result.rows[0].length > 0);
+            return result.rows[0].length > 0;
+        } catch (err) {
+            throw new Error(`Cannont add the User ${err}`);
+        }
+    }
     async getById(id: string): Promise<User> {
         try {
             const conn = await DBConnection.connect();

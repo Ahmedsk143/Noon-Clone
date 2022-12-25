@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import UserModel, { User } from '../models/userModel';
 import * as jwt from 'jsonwebtoken';
+import userModel from '../models/userModel';
 class userController {
     static getAllUsers = async (_req: Request, res: Response) => {
         try {
@@ -40,13 +41,17 @@ class userController {
     static registerNewUser = async (req: Request, res: Response) => {
         try {
             const user: User = req.body;
-            await UserModel.addNew(user);
-            res.status(201).json({
-                message: 'User has been created, Please signin',
-            });
+            if (await userModel.checkEmail(user)) {
+                await UserModel.addNew(user);
+                res.status(201).json({
+                    message: 'User has been created, Please signin',
+                });
+            } else {
+                res.status(400).json({ error: 'Email already exists' });
+            }
         } catch (err) {
             console.log(err);
-            res.status(400).json({ error: `An error occured: ${err}` });
+            res.status(400);
         }
     };
     static authenticateUser = async (req: Request, res: Response) => {
