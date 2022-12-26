@@ -8,7 +8,7 @@ class userController {
             const result = await UserModel.getAll();
             res.json(result);
         } catch (err) {
-            res.status(400).json({ err });
+            res.status(400).json({ error: `An error occured ${err}` });
         }
     };
     static getUserById = async (req: Request, res: Response) => {
@@ -17,7 +17,7 @@ class userController {
             const result = await UserModel.getById(id);
             res.send(result);
         } catch (err) {
-            res.status(400).json({ err });
+            res.status(400).json({ error: `An error occured ${err}` });
         }
     };
     static getUserData = async (req: Request, res: Response) => {
@@ -36,7 +36,7 @@ class userController {
             await UserModel.deleteById(id);
             res.json({ message: 'User has been deleted' });
         } catch (err) {
-            res.status(400).json({ err });
+            res.status(400).json({ error: `An error occured ${err}` });
         }
     };
     static deleteAllUsers = async (req: Request, res: Response) => {
@@ -44,7 +44,7 @@ class userController {
             await UserModel.deleteAll();
             res.json({ message: 'All users have been deleted' });
         } catch (err) {
-            res.status(400).json({ err });
+            res.status(400).json({ error: `An error occured ${err}` });
         }
     };
 
@@ -111,7 +111,7 @@ class userController {
                 res.status(200).json({ token });
             } else res.status(400).json({ message: 'Wrong email or password' });
         } catch (err) {
-            res.status(400).json({ err });
+            res.status(400).json({ error: `An error occured ${err}` });
         }
     };
 }
