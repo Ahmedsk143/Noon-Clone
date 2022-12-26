@@ -36,7 +36,6 @@ class userController {
                     message: 'user does not exist',
                 });
             }
-
             const result = await UserModel.getById(id);
             res.status(200).json(result);
         } catch (err) {
