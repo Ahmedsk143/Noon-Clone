@@ -24,7 +24,8 @@ class userController {
         try {
             const id = req.userId;
             const result = await UserModel.getById(id);
-            res.send(result);
+
+            res.status(200).json(result);
         } catch (err) {
             res.status(400).json({ error: `An error occured ${err}` });
         }
@@ -38,20 +39,55 @@ class userController {
             res.status(400).json({ err });
         }
     };
+    static deleteAllUsers = async (req: Request, res: Response) => {
+        try {
+            await UserModel.deleteAll();
+            res.json({ message: 'All users have been deleted' });
+        } catch (err) {
+            res.status(400).json({ err });
+        }
+    };
+
     static registerNewUser = async (req: Request, res: Response) => {
         try {
             const user: User = req.body;
             if (await userModel.checkEmail(user)) {
+                res.status(400).json({ error: 'Email already exists' });
+            } else {
                 await UserModel.addNew(user);
                 res.status(201).json({
                     message: 'User has been created, Please signin',
                 });
-            } else {
-                res.status(400).json({ error: 'Email already exists' });
             }
         } catch (err) {
             console.log(err);
-            res.status(400);
+            res.status(400).json({ error: `an error occurred ${err}` });
+        }
+    };
+    static changePassword = async (req: Request, res: Response) => {
+        try {
+            const id = req.userId;
+            const currentPassword = req.body.currentPassword;
+            const newPassword = req.body.newPassword;
+            if (await userModel.checkPassword(id, currentPassword)) {
+                await userModel.changePass(id, newPassword);
+                res.status(201).json('Password has been changed');
+            } else {
+                res.status(403).json('Current password is incorrect');
+            }
+        } catch (e) {
+            res.status(400).json({ error: `en error occurred: ${e}` });
+        }
+    };
+    static changeName = async (req: Request, res: Response) => {
+        try {
+            const id = req.userId;
+            const firstName = req.body.firstName;
+            const lastName = req.body.lastName;
+            await userModel.changeName(id, firstName, lastName);
+            res.status(200).json('Data has been updated successfully');
+        } catch (e) {
+            res.status(400).json({ error: `en error occurred: ${e}` });
         }
     };
     static authenticateUser = async (req: Request, res: Response) => {

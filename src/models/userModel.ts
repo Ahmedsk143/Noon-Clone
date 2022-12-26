@@ -10,7 +10,8 @@ export type User = {
     firstName: string;
     lastName: string;
     email: string;
-    password: string;
+    password?: string;
+    prefLang: string;
 };
 class UserModel {
     async getAll(): Promise<User[]> {
@@ -28,9 +29,20 @@ class UserModel {
         try {
             const conn = await DBConnection.connect();
             const sql =
-                'insert into users(first_name, last_name,email, password) values($1, $2, $3, $4) RETURNING *';
-            const hash = bcrypt.hashSync(user.password + pepper, salt);
-            const values = [user.firstName, user.lastName, user.email, hash];
+                'insert into users(first_name, last_name,email, password, pref_lang) values($1, $2, $3, $4, $5) RETURNING *';
+            let hash;
+            if (user.password) {
+                hash = bcrypt.hashSync(user.password + pepper, salt);
+            } else {
+                throw new Error(`Password must be provided`);
+            }
+            const values = [
+                user.firstName,
+                user.lastName,
+                user.email,
+                hash,
+                user.prefLang,
+            ];
             const result = await conn.query(sql, values);
             conn.release();
             return result.rows[0];
@@ -41,16 +53,45 @@ class UserModel {
     async checkEmail(user: User): Promise<boolean> {
         try {
             const conn = await DBConnection.connect();
-            const sql = 'select email from users where email = $1';
+            const sql = 'select * from users where email=$1';
             const values = [user.email];
             const result = await conn.query(sql, values);
             conn.release();
-            console.log(result.rows[0].length > 0);
-            return result.rows[0].length > 0;
+            return result.rows[0] != undefined;
         } catch (err) {
             throw new Error(`Cannont add the User ${err}`);
         }
     }
+    async changePass(id: string, value: string): Promise<boolean> {
+        try {
+            const conn = await DBConnection.connect();
+            const sql = `update users set password = $1 where id = $2 returning *`;
+            const hash = bcrypt.hashSync(value + pepper, salt);
+            const values = [hash, id];
+            const result = await conn.query(sql, values);
+            conn.release();
+            return result.rows[0];
+        } catch (err) {
+            throw new Error(`Can't change the password ${err}`);
+        }
+    }
+    async changeName(
+        id: string,
+        first: string,
+        last: string
+    ): Promise<boolean> {
+        try {
+            const conn = await DBConnection.connect();
+            const sql = `update users set first_name = $1, last_name = $2  where id = $3 returning *`;
+            const values = [first, last, id];
+            await conn.query(sql, values);
+            conn.release();
+            return true;
+        } catch (err) {
+            throw new Error(`Cannont change the name ${err}`);
+        }
+    }
+
     async getById(id: string): Promise<User> {
         try {
             const conn = await DBConnection.connect();
@@ -59,7 +100,14 @@ class UserModel {
             const result = await conn.query(sql, values);
             conn.release();
             delete result.rows[0].password;
-            return result.rows[0];
+            const user: User = {
+                id: result.rows[0].id,
+                firstName: result.rows[0].first_name,
+                lastName: result.rows[0].last_name,
+                email: result.rows[0].email,
+                prefLang: result.rows[0].pref_lang,
+            };
+            return user;
         } catch (err) {
             throw new Error(`Cannont get the User ${err}`);
         }
@@ -76,6 +124,18 @@ class UserModel {
             throw new Error(`Cannont delete the User ${err}`);
         }
     }
+    async deleteAll(): Promise<boolean> {
+        try {
+            const conn = await DBConnection.connect();
+            const sql = 'delete from users';
+            await conn.query(sql);
+            conn.release();
+            return true;
+        } catch (err) {
+            throw new Error(`Cannont delete the User ${err}`);
+        }
+    }
+
     async authenticate(email: string, password: string): Promise<User | null> {
         const conn = await DBConnection.connect();
         const sql = 'select * from users where email=$1';
@@ -90,10 +150,25 @@ class UserModel {
                     lastName: result.rows[0].last_name,
                     email: email,
                     password: '',
+                    prefLang: result.rows[0].pref_lang,
                 };
             }
         }
         return null;
+    }
+
+    async checkPassword(id: string, password: string): Promise<boolean> {
+        const conn = await DBConnection.connect();
+        const sql = 'select * from users where id=$1';
+        const result = await conn.query(sql, [id]);
+        if (result.rows.length > 0) {
+            if (
+                bcrypt.compareSync(password + pepper, result.rows[0].password)
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 export default new UserModel();

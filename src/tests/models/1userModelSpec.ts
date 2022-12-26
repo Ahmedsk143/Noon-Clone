@@ -10,6 +10,7 @@ describe('User Database actions', () => {
             password: '1234',
             firstName: 'ahmed',
             lastName: 'khalil',
+            prefLang: 'en',
         };
         const result = await userModel.addNew(user);
         expect(result.id).toEqual(1);

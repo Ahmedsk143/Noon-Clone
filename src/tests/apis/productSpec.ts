@@ -22,7 +22,7 @@ describe('Prdoucts APIs: ', () => {
     });
 
     it('DELETE /products should delete a product by id', () => {
-        const prodcut = {
+        const product = {
             name: 'Fan Heater',
             price: 999,
             category: 'Heaters',
@@ -31,7 +31,7 @@ describe('Prdoucts APIs: ', () => {
         request
             .get('/api/v1/products/1')
             .set('Authorization', `Bearer ${token}`)
-            .send(prodcut)
+            .send(product)
             .expect('Content-Type', 'application/json')
             .expect(200);
     });

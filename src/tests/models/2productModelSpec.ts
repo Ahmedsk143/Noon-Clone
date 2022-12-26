@@ -5,12 +5,12 @@ describe('Product Database actions', () => {
         expect(productModel.addNew).toBeDefined();
     });
     it('addNew method should create a new product and the created product is equal to the returned product', async () => {
-        const prodcut: Product = {
+        const product: Product = {
             name: 'Fan Heater',
             price: 999,
             category: 'Heaters',
         };
-        const result = await productModel.addNew(prodcut);
+        const result = await productModel.addNew(product);
         expect(result.name).toEqual('Fan Heater');
     });
     it('Should have a getAll method', () => {
@@ -24,7 +24,7 @@ describe('Product Database actions', () => {
         expect(productModel.getById).toBeDefined();
     });
     it('getById method should return the correct product data', async () => {
-        const prodcut: Product = await productModel.getById('1');
-        expect(prodcut.id).toEqual(1);
+        const product: Product = await productModel.getById('1');
+        expect(product.id).toEqual(1);
     });
 });
