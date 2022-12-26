@@ -30,6 +30,7 @@ class userController {
                 });
             }
             const isUser = await userModel.checkId(id);
+            console.log(isUser);
             if (!isUser) {
                 res.status(400).json({
                     status: 'Failure',

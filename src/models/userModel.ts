@@ -117,8 +117,11 @@ class UserModel {
             const conn = await DBConnection.connect();
             const sql = 'select * from users where id = $1 ';
             const values = [id];
-            await conn.query(sql, values);
+            const result = await conn.query(sql, values);
             conn.release();
+            if (!result.rows[0]) {
+                return false;
+            }
             return true;
         } catch (err) {
             return false;
