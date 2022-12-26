@@ -29,6 +29,14 @@ class userController {
                     message: 'Invalid token',
                 });
             }
+            const isUser = await userModel.checkId(id);
+            if (!isUser) {
+                res.status(400).json({
+                    status: 'Failure',
+                    message: 'user does not exist',
+                });
+            }
+
             const result = await UserModel.getById(id);
             res.status(200).json(result);
         } catch (err) {

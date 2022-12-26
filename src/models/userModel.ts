@@ -112,6 +112,18 @@ class UserModel {
             throw new Error(`Cannont get the User ${err}`);
         }
     }
+    async checkId(id: string): Promise<boolean> {
+        try {
+            const conn = await DBConnection.connect();
+            const sql = 'select * from users where id = $1 ';
+            const values = [id];
+            await conn.query(sql, values);
+            conn.release();
+            return true;
+        } catch (err) {
+            return false;
+        }
+    }
     async deleteById(id: string): Promise<User> {
         try {
             const conn = await DBConnection.connect();
@@ -137,38 +149,52 @@ class UserModel {
     }
 
     async authenticate(email: string, password: string): Promise<User | null> {
-        const conn = await DBConnection.connect();
-        const sql = 'select * from users where email=$1';
-        const result = await conn.query(sql, [email]);
-        if (result.rows.length > 0) {
-            if (
-                bcrypt.compareSync(password + pepper, result.rows[0].password)
-            ) {
-                return {
-                    id: result.rows[0].id,
-                    firstName: result.rows[0].first_name,
-                    lastName: result.rows[0].last_name,
-                    email: email,
-                    password: '',
-                    prefLang: result.rows[0].pref_lang,
-                };
+        try {
+            const conn = await DBConnection.connect();
+            const sql = 'select * from users where email=$1';
+            const result = await conn.query(sql, [email]);
+            if (result.rows.length > 0) {
+                if (
+                    bcrypt.compareSync(
+                        password + pepper,
+                        result.rows[0].password
+                    )
+                ) {
+                    return {
+                        id: result.rows[0].id,
+                        firstName: result.rows[0].first_name,
+                        lastName: result.rows[0].last_name,
+                        email: email,
+                        password: '',
+                        prefLang: result.rows[0].pref_lang,
+                    };
+                }
             }
+            return null;
+        } catch (err) {
+            return null;
         }
-        return null;
     }
 
     async checkPassword(id: string, password: string): Promise<boolean> {
-        const conn = await DBConnection.connect();
-        const sql = 'select * from users where id=$1';
-        const result = await conn.query(sql, [id]);
-        if (result.rows.length > 0) {
-            if (
-                bcrypt.compareSync(password + pepper, result.rows[0].password)
-            ) {
-                return true;
+        try {
+            const conn = await DBConnection.connect();
+            const sql = 'select * from users where id=$1';
+            const result = await conn.query(sql, [id]);
+            if (result.rows.length > 0) {
+                if (
+                    bcrypt.compareSync(
+                        password + pepper,
+                        result.rows[0].password
+                    )
+                ) {
+                    return true;
+                }
             }
+            return false;
+        } catch (err) {
+            return false;
         }
-        return false;
     }
 }
 export default new UserModel();
