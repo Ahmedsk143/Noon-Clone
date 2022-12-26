@@ -23,8 +23,13 @@ class userController {
     static getUserData = async (req: Request, res: Response) => {
         try {
             const id = req.userId;
+            if (!id) {
+                res.status(400).json({
+                    status: 'Failure',
+                    message: 'Invalid token',
+                });
+            }
             const result = await UserModel.getById(id);
-
             res.status(200).json(result);
         } catch (err) {
             res.status(400).json({ error: `An error occured ${err}` });

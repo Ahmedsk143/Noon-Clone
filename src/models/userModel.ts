@@ -29,7 +29,7 @@ class UserModel {
         try {
             const conn = await DBConnection.connect();
             const sql =
-                'insert into users(first_name, last_name,email, password, pref_lang) values($1, $2, $3, $4, $5) RETURNING *';
+                'insert into users(first_name, last_name, email, password, pref_lang) values($1, $2, $3, $4, $5) RETURNING *';
             let hash;
             if (user.password) {
                 hash = bcrypt.hashSync(user.password + pepper, salt);
